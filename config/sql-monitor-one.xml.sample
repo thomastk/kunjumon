@@ -1,0 +1,33 @@
+<kunjumon nagios_instance="test-kunjumon">
+   <db_connections>
+      <db_connection name="testmysql" db_system="mysql" db_version="5.5" db_host_name="xxx.host.com" db_name="target-db" user_name="xuser" user_pass="xpass"/>
+      <db_connection name="testoracle" db_system="oracle" db_version="12g" db_host_name="ora.host.com" db_name="testdb" user_name="orauser" user_pass="xpass"/>
+      <db_connection name="testpostgres" db_system="postgres" db_version="12g" db_host_name="ora.host.com" db_name="testdb" user_name="orauser" user_pass="xpass"/>
+      <db_connection name="testmssql" db_system="mssql" db_version="2012" db_host_name="ora.host.com" db_name="testdb" user_name="orauser" user_pass="xpass"/>
+   </db_connections>
+   <monitors>
+      <monitor name="test-mysql-mon">
+         <checks>
+            <check name="check 1" source_type="database" db_connection="testmysql">
+               <sql value_label="Employee Name">SELECT name FROM emp where name like '%Doe'</sql>
+               <validation type="string" operator="EQ" case_sensitive="y">
+                  <thresholds ok="John Doe"/>
+               </validation>
+            </check>
+            <check name="check 2" source_type="database" db_connection="testoracle">
+               <sql value_label="Employee Count">SELECT count(*) FROM emp</sql>
+               <validation type="number" operator="LT">
+                  <thresholds ok="100" warning="150"/>
+               </validation>
+            </check>
+            <check name="check 3" source_type="database" db_connection="testpostgres">
+               <connection db_system="mysql" db_version="5.5" db_host_name="xxx.host.com" db_host_port="" db_name="target-db" user_name="xuser" user_pass="xpass"/> 
+               <sql value_label="Job Description">SELECT job_desc FROM emp where name='monitoring employee'</sql>
+               <validation type="regex" case_sensitive="y">
+                  <thresholds ok="(^Lead)|(Manager)"/>
+               </validation>
+            </check>
+         </checks>
+      </monitor>
+   </monitors>
+</kunjumon>
