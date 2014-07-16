@@ -2,7 +2,7 @@
 
 use Getopt::Long;
 use XML::Simple;
-use Data::Dumper;
+use Data::Dumper; #for debug
 
 use strict;
 use warnings;
@@ -57,7 +57,7 @@ foreach my $check (@{$monitor_config->{checks}->[0]->{check}}) {
    $kmUtils::CHECK_NAME=$check->{name};
    my $source_type=$check->{source_type};
    if ($source_type eq 'database') {
-      my $rc=runDatabaseCheck($check);
+      my $rc=kmDbSupport::runDatabaseCheck($check);
       exitMon($rc) unless ($rc!=$kmUtils::NAGIOS_CRITICAL && $rc!=$kmUtils::NAGIOS_UNKNOWN);
       $mon_status=$rc;
    }

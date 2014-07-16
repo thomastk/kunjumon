@@ -1,5 +1,7 @@
 #!/usr/bin/perl
 
+package kmDbSupport;
+
 use DBI;
 
 use strict;
@@ -79,17 +81,20 @@ sub runDatabaseCheck
       }
    }
 
-   my $sth=$dbh->prepare($check->{sql});
+   my $sth=$dbh->prepare($check->{sql}->[0]->{content});
    if (!defined $sth) {
       $kmUtils::ALERT_TEXT=$kmUtils::CHECK_NAME.':'."Problem preparing the sql statement for the check.";
       return($kmUtils::NAGIOS_UNKNOWN);
    }
    
+#print Dumper($check->{sql})."\n";
+#exit;
+
    if (!$sth->execute()) {
       $kmUtils::ALERT_TEXT=$kmUtils::CHECK_NAME.':'."Problem executing the sql statement for the check.";
       return($kmUtils::NAGIOS_UNKNOWN);
    }
-   my $value_label=$check->{sql}->{value_label};
+   my $value_label=$check->{sql}->[0]->{value_label};
    my ($db_val)=$sth->fetchrow_array;
    if (!defined $db_val) {
       $kmUtils::ALERT_TEXT=$kmUtils::CHECK_NAME.':'."No result returned by the query.";
@@ -98,7 +103,7 @@ sub runDatabaseCheck
    $sth->finish;
    $dbh->disconnect;
 
-   return validateStatus($db_val,$check);
+   return kmUtils::validateStatus($db_val,$check);
 }
 
 1;
