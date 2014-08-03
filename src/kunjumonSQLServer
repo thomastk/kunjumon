@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#Any environment settings specific to SQL Server.
+
+INSTALL_DIR=/usr/local/nagios/kunjumon
+FREETDS_LIB_PATH=/usr/local/freetds/lib/
+
+CONFIG_FILE=$1
+MONITOR_NAME=$2
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$FREETDS_LIB_PATH
+$INSTALL_DIR/kunjumon.pl $CONFIG_FILE $MONITOR_NAME

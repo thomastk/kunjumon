@@ -1,0 +1,12 @@
+#!/bin/bash
+
+#Any environment settings specific to Oracle.
+
+INSTALL_DIR=/usr/local/nagios/kunjumon
+ORACLE_CLIENT_LIB_PATH=/usr/lib/oracle/11.2/client64/lib
+
+CONFIG_FILE=$1
+MONITOR_NAME=$2
+
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$ORACLE_CLIENT_LIB_PATH
+$INSTALL_DIR/kunjumon.pl $CONFIG_FILE $MONITOR_NAME

@@ -2,9 +2,9 @@
 NAGIOS_DIR=/usr/local/nagios
 INSTALL_DIR=$(NAGIOS_DIR)/kunjumon
 
-all: src/*.pl src/*.pm config/*.xml
+all: src/* config/*.xml
 	cd ..
-	tar cvzf kunjumon.tgz ../kunjumon/Makefile ../kunjumon/src/*.pm ../kunjumon/src/*.pl ../kunjumon/config/*.xml
+	tar cvzf kunjumon.tgz ../kunjumon/Makefile ../kunjumon/src/* ../kunjumon/config/*.xml
 
 install:
 	mkdir -p $(INSTALL_DIR)/

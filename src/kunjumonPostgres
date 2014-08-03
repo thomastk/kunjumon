@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#Any environment settings specific to Postgres.
+
+INSTALL_DIR=/usr/local/nagios/kunjumon
+
+CONFIG_FILE=$1
+MONITOR_NAME=$2
+
+$INSTALL_DIR/kunjumon.pl $CONFIG_FILE $MONITOR_NAME
