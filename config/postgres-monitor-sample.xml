@@ -1,0 +1,17 @@
+<kunjumon nagios_instance="test-kunjumon">
+   <db_connections>
+      <db_connection name="testpostgres" db_system="postgres" db_version="9.3.3" db_host_name="kujumonpg.xxxxxxxxxx.us-west-1.rds.amazonaws.com" db_host_port="5432"  db_name="pgdbname" user_name="nagpg" user_pass="XXXXXXXX"/>
+   </db_connections>
+   <monitors>
+      <monitor name="test-pg">
+         <checks>
+            <check name="check 1" source_type="database" db_connection="testpostgres">
+               <sql value_label="Dual Dummy">SELECT 'kunjumon' FROM pg_catalog.pg_tables</sql>
+               <validation type="string" operator="EQ" case_sensitive="y">
+                  <thresholds ok="utf8"/>
+               </validation>
+            </check>
+         </checks>
+      </monitor>
+   </monitors>
+</kunjumon>

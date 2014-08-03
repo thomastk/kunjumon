@@ -21,7 +21,6 @@ sub runDatabaseCheck
    my $db_connection=$check->{db_connection};
    my $db_config=$kmUtils::INSTANCE_CONFIG->{db_connections}->[0]->{db_connection}->{$db_connection};
 
-
    my $dsn_str=$db_config->{dsn};
    my $db_host_name=$db_config->{db_host_name};
    my $db_host_port=$db_config->{db_host_port};
@@ -54,7 +53,7 @@ sub runDatabaseCheck
          $dsn="dbi:Pg:dbname=$db_name;host=$db_host_name"; 
       }
       else {
-         $kmUtils::ALERT_TEXT=$kmUtils::CHECK_NAME.':'."Unsupported database type: $db_system.";
+         $kmUtils::ALERT_TEXT.=$kmUtils::CHECK_NAME.':'."Unsupported database type: $db_system.";
          return($kmUtils::NAGIOS_UNKNOWN);
       }
    
@@ -65,39 +64,36 @@ sub runDatabaseCheck
    my $dbh=undef;
    eval { $dbh=DBI->connect($dsn,$user_name,$user_pass) };
    if ($@) {
-      $kmUtils::ALERT_TEXT=$kmUtils::CHECK_NAME.':'."Database connection problem. ".$@;
+      $kmUtils::ALERT_TEXT.=$kmUtils::CHECK_NAME.':'."Database connection problem. ".$@;
       return($kmUtils::NAGIOS_UNKNOWN);
    }
    if (!defined $dbh) {
-      $kmUtils::ALERT_TEXT=$kmUtils::CHECK_NAME.':'."Database connection problem. ".$DBI::errstr;
+      $kmUtils::ALERT_TEXT.=$kmUtils::CHECK_NAME.':'."Database connection problem. ".$DBI::errstr;
       return($kmUtils::NAGIOS_UNKNOWN);
    }
 
    #For some database systems database cannot be set as part of connect
    if ($db_system eq 'mssql') {
       if (!$dbh->do("use $db_name")) {
-         $kmUtils::ALERT_TEXT=$kmUtils::CHECK_NAME.':'."Cannot set database $db_name.".$dbh->errstr;
+         $kmUtils::ALERT_TEXT.=$kmUtils::CHECK_NAME.':'."Cannot set database $db_name.".$dbh->errstr;
          return($kmUtils::NAGIOS_UNKNOWN);
       }
    }
 
    my $sth=$dbh->prepare($check->{sql}->[0]->{content});
    if (!defined $sth) {
-      $kmUtils::ALERT_TEXT=$kmUtils::CHECK_NAME.':'."Problem preparing the sql statement for the check.";
+      $kmUtils::ALERT_TEXT.=$kmUtils::CHECK_NAME.':'."Problem preparing the sql statement for the check.";
       return($kmUtils::NAGIOS_UNKNOWN);
    }
    
-#print Dumper($check->{sql})."\n";
-#exit;
-
    if (!$sth->execute()) {
-      $kmUtils::ALERT_TEXT=$kmUtils::CHECK_NAME.':'."Problem executing the sql statement for the check.";
+      $kmUtils::ALERT_TEXT.=$kmUtils::CHECK_NAME.':'."Problem executing the sql statement for the check.";
       return($kmUtils::NAGIOS_UNKNOWN);
    }
    my $value_label=$check->{sql}->[0]->{value_label};
    my ($db_val)=$sth->fetchrow_array;
    if (!defined $db_val) {
-      $kmUtils::ALERT_TEXT=$kmUtils::CHECK_NAME.':'."No result returned by the query.";
+      $kmUtils::ALERT_TEXT.=$kmUtils::CHECK_NAME.':'."No result returned by the query.";
       return($kmUtils::NAGIOS_CRITICAL);
    }
    $sth->finish;

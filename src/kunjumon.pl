@@ -14,12 +14,6 @@ use kmDbSupport;
 #kunjmon.pl - A Nagios plugin to define monitors that queries system status from services such as databases and web APIs.
 #The configuration file used for defining a monitor contains accees info for the data service that the plugin uses and monitoring thresholds.
 
-#Verbose levels, as recommended in Nagios plugin development guidelines
-#0 Single line, minimal output. Summary
-#1 Single line, additional information (eg list processes that fail)
-#2 Multi line, configuration debug output (eg ps command used)
-#3 Lots of detail for plugin problem diagnosis
-
 #Use this command to define commands in commands.cfg and individual monitors in localhost.cfg
 #Syntax: kunjumon.pl config-file monitor-name
 
@@ -46,6 +40,16 @@ if ($@) {
 
 my $monitor_config=$kmUtils::INSTANCE_CONFIG->{monitors}->[0]->{monitor}->{$monitor_name};
 
+#my $monitor_config;
+#my $monitor_ctr=0;
+#while ($kmUtils::INSTANCE_CONFIG->{monitors}->[$monitor_ctr]->{monitor}) {
+#   if (defined $kmUtils::INSTANCE_CONFIG->{monitors}->[$monitor_ctr]->{monitor}->{$monitor_name}) {
+#      $monitor_config=$kmUtils::INSTANCE_CONFIG->{monitors}->[$monitor_ctr]->{monitor}->{$monitor_name};
+#      last;
+#   }
+#   $monitor_ctr++;
+#}
+
 if (!defined $monitor_config) {
    $kmUtils::ALERT_TEXT="Cannot find configuration for monitor ($monitor_name) in $config_file.";
    exitMon($kmUtils::NAGIOS_UNKNOWN);
@@ -54,21 +58,23 @@ if (!defined $monitor_config) {
 #look up which data sources are used by the monitor,load related Perl libs and 
 #check availability of supporting tools, and run checks.
 foreach my $check (@{$monitor_config->{checks}->[0]->{check}}) {
+   my $rc;
    $kmUtils::CHECK_NAME=$check->{name};
    my $source_type=$check->{source_type};
    if ($source_type eq 'database') {
-      my $rc=kmDbSupport::runDatabaseCheck($check);
-      exitMon($rc) unless ($rc!=$kmUtils::NAGIOS_CRITICAL && $rc!=$kmUtils::NAGIOS_UNKNOWN);
-      $mon_status=$rc;
+      $rc=kmDbSupport::runDatabaseCheck($check);
    }
    else {
-      $kmUtils::ALERT_TEXT=$kmUtils::CHECK_NAME.':'."Unsupported data source type specified.";
-      exitMon($kmUtils::NAGIOS_UNKNOWN);
+      $kmUtils::ALERT_TEXT.=$kmUtils::CHECK_NAME.':'."Unsupported data source type specified.";
+      $rc=$kmUtils::NAGIOS_UNKNOWN;
    }
+   #The return values from individual checks could be a mixed-bag
+   #The highest value (normally the worst case should be chosen as the 
+   #status of the monitor/service
+   $mon_status=$rc unless $mon_status>$rc;
 }
 
 exitMon($mon_status);
-
 
 sub exitMon
 {

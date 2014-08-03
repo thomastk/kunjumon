@@ -29,9 +29,6 @@ sub validateStatus
    $CHECK_NAME=$check->{name};
    my $value_label=$check->{sql}->[0]->{value_label};
 
-#print Dumper($check->{validation})."\n";
-#exit;
-
    my $compare_type=$check->{validation}->[0]->{type};
    if ($compare_type eq 'string')  {
       my $threshold_val=$check->{validation}->[0]->{thresholds}->[0]->{ok};
@@ -87,7 +84,7 @@ sub validateStatus
       }
       elsif ($op eq 'GT') { #greater the better
          if ($curr_val > $val_ok) {
-            print "$CHECK_NAME: $value_label:O:$curr_val > $val_ok.\n";
+            $ALERT_TEXT.="$CHECK_NAME: $value_label:O:$curr_val > $val_ok.";
             return($NAGIOS_OK);
          }
          elsif ($curr_val > $val_warning) {

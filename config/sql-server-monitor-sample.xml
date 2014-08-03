@@ -1,0 +1,17 @@
+<kunjumon nagios_instance="test-kunjumon">
+   <db_connections>
+      <db_connection name="testmssql" db_system="mssql" db_version="2012" db_host_name="mssqlnagios" db_name="master" user_name="nagmssql" user_pass="XXXXXXXXX"/>
+   </db_connections>
+   <monitors>
+      <monitor name="test-mssql">
+         <checks>
+            <check name="check 1" source_type="database" db_connection="testmssql">
+               <sql value_label="Check Version">SELECT @@version</sql>
+               <validation type="regex" case_sensitive="y">
+                  <thresholds ok="^Microsoft SQL Server 2012"/>
+               </validation>
+            </check>
+         </checks>
+      </monitor>
+   </monitors>
+</kunjumon>

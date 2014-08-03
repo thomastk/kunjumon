@@ -1,0 +1,17 @@
+<kunjumon nagios_instance="test-kunjumon">
+   <db_connections>
+      <db_connection name="testoracle" db_system="oracle" db_version="11g" db_host_name="kunjumonora.xxxxxxxxx.us-west-1.rds.amazonaws.com" db_name="NAGIOS" db_host_port="1521" user_name="nagora" user_pass="XXXXXXXX"/>
+   </db_connections>
+   <monitors>
+      <monitor name="test-oracle">
+         <checks>
+            <check name="check 1" source_type="database" db_connection="testoracle2">
+               <sql value_label="Dual Dummy">SELECT 'kunjumon' FROM dual</sql>
+               <validation type="string" operator="EQ" case_sensitive="y">
+                  <thresholds ok="utf8"/>
+               </validation>
+            </check>
+         </checks>
+      </monitor>
+   </monitors>
+</kunjumon>

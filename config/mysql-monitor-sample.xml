@@ -1,0 +1,17 @@
+<kunjumon nagios_instance="test-kunjumon">
+   <db_connections>
+      <db_connection name="rdsmysql" db_system="mysql" db_version="5.5" db_host_name="kunjumonmysql.xxxxxxxxx.us-west-1.rds.amazonaws.com" db_name="information_schema" user_name="nagmysql" user_pass="XXXXXX"/>
+   </db_connections>
+   <monitors>
+      <monitor name="test-mysql">
+         <checks>
+            <check name="check 1" source_type="database" db_connection="rdsmysql">
+               <sql value_label="Tables Count">select count(*) from tables</sql>
+               <validation type="number" operator="GT">
+                  <thresholds ok="60" warning="50"/>
+               </validation>
+            </check>
+         </checks>
+      </monitor>
+   </monitors>
+</kunjumon>

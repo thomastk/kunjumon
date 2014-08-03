@@ -1,0 +1,72 @@
+<kunjumon nagios_instance="test-kunjumon">
+   <db_connections>
+      <db_connection name="rdsmysql" db_system="mysql" db_version="5.5" db_host_name="kunjumonmysql.xxxxxxxxx.us-west-1.rds.amazonaws.com" db_name="information_schema" user_name="nagmysql" user_pass="XXXXXX"/>
+      <db_connection name="testoracle" db_system="oracle" db_version="11g" db_host_name="kunjumonora.xxxxxxxxx.us-west-1.rds.amazonaws.com" db_name="NAGIOS" db_host_port="1521" user_name="nagora" user_pass="XXXXXXXX"/>
+      <db_connection name="testpostgres" db_system="postgres" db_version="9.3.3" db_host_name="kujumonpg.xxxxxxxxxx.us-west-1.rds.amazonaws.com" db_host_port="5432"  db_name="pgdbname" user_name="nagpg" user_pass="XXXXXXXX"/>
+      <db_connection name="testmssql" db_system="mssql" db_version="2012" db_host_name="mssqlnagios" db_name="master" user_name="nagmssql" user_pass="XXXXXXXXX"/>
+   </db_connections>
+   <monitors>
+      <monitor name="test-mysql-multi-check">
+         <checks>
+            <check name="check 1" source_type="database" db_connection="rdsmysql">
+               <sql value_label="UTF Character Set">select CHARACTER_SET_NAME from CHARACTER_SETS where CHARACTER_SET_NAME like '%utf%'</sql>
+               <validation type="string" operator="EQ" case_sensitive="y">
+                  <thresholds ok="utf8"/>
+               </validation>
+            </check>
+            <check name="check 2" source_type="database" db_connection="rdsmysql">
+               <sql value_label="Tables Count">select count(*) from tables</sql>
+               <validation type="number" operator="GT">
+                  <thresholds ok="60" warning="50"/>
+               </validation>
+            </check>
+            <check name="check 3" source_type="database" db_connection="rdsmysql">
+               <sql value_label="Character Set Name">select CHARACTER_SET_NAME from CHARACTER_SETS where CHARACTER_SET_NAME like 'latin%'</sql>
+               <validation type="regex" case_sensitive="y">
+                  <thresholds ok="(^latin[17])"/>
+               </validation>
+            </check>
+         </checks>
+      </monitor>
+      <monitor name="test-mysql">
+         <checks>
+            <check name="check 1" source_type="database" db_connection="rdsmysql">
+               <sql value_label="Tables Count">select count(*) from tables</sql>
+               <validation type="number" operator="GT">
+                  <thresholds ok="60" warning="50"/>
+               </validation>
+            </check>
+         </checks>
+      </monitor>
+      <monitor name="test-oracle">
+         <checks>
+            <check name="check 1" source_type="database" db_connection="testoracle2">
+               <sql value_label="Dual Dummy">SELECT 'kunjumon' FROM dual</sql>
+               <validation type="string" operator="EQ" case_sensitive="y">
+                  <thresholds ok="utf8"/>
+               </validation>
+            </check>
+         </checks>
+      </monitor>
+      <monitor name="test-pg">
+         <checks>
+            <check name="check 1" source_type="database" db_connection="testpostgres">
+               <sql value_label="Dual Dummy">SELECT 'kunjumon' FROM pg_catalog.pg_tables</sql>
+               <validation type="string" operator="EQ" case_sensitive="y">
+                  <thresholds ok="utf8"/>
+               </validation>
+            </check>
+         </checks>
+      </monitor>
+      <monitor name="test-mssql">
+         <checks>
+            <check name="check 1" source_type="database" db_connection="testmssql">
+               <sql value_label="Check Version">SELECT @@version</sql>
+               <validation type="regex" case_sensitive="y">
+                  <thresholds ok="^Microsoft SQL Server 2012"/>
+               </validation>
+            </check>
+         </checks>
+      </monitor>
+   </monitors>
+</kunjumon>
